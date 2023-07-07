@@ -1,3 +1,4 @@
 downloads/*
 *.epub
 epubs/*
+__pycache__/*
