@@ -1,23 +1,31 @@
 import os
 import re
+from time import sleep
 from bs4 import BeautifulSoup
 import requests
 
 
 def extract_html(url):
 
+    tries = 0
+
     headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
 
-    response = requests.get(url, headers=headers)
+    while tries <= 5:
+        response = requests.get(url, headers=headers)
 
-    if response.status_code == 200:
-        html = response.text
-        soup = BeautifulSoup(html, 'html.parser')
-        return soup
-    else:
-        return None
+        if response.status_code == 200:
+            html = response.text
+            soup = BeautifulSoup(html, 'html.parser')
+            return soup
+        else:
+            tries += 1
+        sleep(0.5)
+        
+    return None
+    
 
 def download_image(image_url, path):
     if not os.path.exists('downloads'):
@@ -74,6 +82,8 @@ def extract_images(url):
                         images_url.append(srcset_value)
         else:
             print('A tag <div> com o id "slider" não foi encontrada.')
+    else: 
+        print('Não foi possível baixar a página')
     return images_url
 
 def extract_chaps(url):
